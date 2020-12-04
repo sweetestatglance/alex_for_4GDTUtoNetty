@@ -1,0 +1,27 @@
+
+#打印sql语句
+#mybatis.configuration.log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+server:
+  port: 8966
+  servlet:
+    context-path: /
+
+alex:
+  port: 8896
+
+file:
+  #自己定义
+  image-path: :/myimages
+
+spring:
+  resources: # 指定静态资源的路径
+    static-locations: classpath:/static/,classpath:/templates/,classpath:/layui/,file:${file.image-path}
+  datasource:
+    #服务器数据库
+    url: jdbc:mysql://192.168.5.106:3306/alex_for_dtu?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource

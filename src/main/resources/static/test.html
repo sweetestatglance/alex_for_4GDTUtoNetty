@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<script type="text/javascript" charset="utf-8" src="jquery-1.8.1.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/layui.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<link rel="stylesheet" href="/css/layui.css">
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<head>
+    <meta charset="UTF-8">
+    <title>远程控制测试页面 BY alex</title>
+</head>
+<body>
+<style>
+    /*.myalex{
+        width: 350px;
+        margin-left: 30%;
+        margin-top: 20%;
+        font-size: 30px;
+    }*/
+    .alex-fontsize{
+        font-size: 2em;
+    }
+    .juzhong{
+        text-align: center;
+    }
+    .alex-button{
+        height: 60px;
+        line-height: 60px;
+        font-size: 1em;
+    }
+    .alex-display-block{
+        display: none;
+    }
+    body{
+        background-color: #f4ecff;
+    }
+</style>
+<div class="container" style="padding: 20px;">
+    <div class="layui-row juzhong alex-fontsize" style="margin-top: 200px;padding-bottom: 10px;">
+        <button data-zhiling="01050000FF008C3A" id="alex-take-on" type="button" class="layui-btn-lg layui-btn alex-now-datacopy alex-button">开 启</button>
+    </div>
+
+    <div class="layui-row juzhong alex-fontsize" style="padding-top: 40px;padding-bottom: 10px;margin-top: 40px;">
+        <button data-zhiling="010500000000CDCA" id="alex-take-off" class="layui-btn-lg layui-btn alex-now-data alex-button">关 闭</button>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    $(function () {
+        layui.use('layer', function () {
+            $("#alex-take-on").click(function () {
+                var takeon = $("#alex-take-on").attr("data-zhiling");
+                $.ajax({
+                    url : '/test/pcforcontrl',
+                    type : 'POST',
+                    data : {"zhiling": takeon,"id": "alex01"},
+                    dataType : 'json',
+                    cache : false,
+                    success : function(data) {
+                        layer.msg("<lable style='font-size: 2em;line-height: 3.5em;'>已开启</lable>", {area:['20em', '9em'], time: 2000, shade: [0.3, '#000', true]});
+                    },
+                    error : function(XMLHttpRequest, textStatus, errorThrown) {
+
+                    }
+                });
+            });
+            $("#alex-take-off").click(function () {
+                var takeoff = $("#alex-take-off").attr("data-zhiling");
+                $.ajax({
+                    url : '/test/pcforcontrl',
+                    type : 'POST',
+                    data : {"zhiling": takeoff,"id": "alex01"},
+                    dataType : 'json',
+                    cache : false,
+                    success : function(data) {
+                        layer.msg("<lable style='font-size: 2em;line-height: 3.5em;'>已关闭</lable>", {area:['20em', '9em'], time: 2000, shade: [0.3, '#000', true]});
+                    },
+                    error : function(XMLHttpRequest, textStatus, errorThrown) {
+
+                    }
+                });
+            });
+
+        });
+
+        //通过ajax，在页面加载的时候获取微信分享接口signature，nonceStr，timestamp 和appId
+       /* $.ajax({
+            type: "get",
+            url: '<%=basePath%>/byalex/share.do',
+            dataType: "json",
+            data:"url="+encodeURIComponent(window.location.href.split('#')[0]),
+            success: function (data) {
+                wx.config({
+                    debug: false,
+                    appId: data.appId,
+                    timestamp: data.timestamp,
+                    nonceStr: data.nonceStr,
+                    signature: data.signature,
+                    jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareWeibo']
+                    // 功能列表，我们要使用JS-SDK的什么功能
+                });
+                wx.ready(function () {
+                    // 获取“分享给朋友”按钮点击状态及自定义分享内容接口
+                    wx.updateAppMessageShareData({
+                        title: "李家岩水情实况通报", // 分享标题
+                        desc: "四川恒宣水情实况通报，点击查看每日约定时段水情及实时水情数据...", // 分享描述
+                        link: "http://alex.mynatapp.cc/alex/index.jsp",//分享点击之后的链接---部署域名
+                        imgUrl:'http://alex.mynatapp.cc/alex/cdevlogo.png', // 分享图标---部署域名
+                        type: 'link', // 分享类型,music、video或link，不填默认为link
+                        success: function () {
+                            //成功之后的回调
+                        },
+                        cancel: function () {
+                            // 用户取消分享后执行的回调函数
+                        }
+                    });
+
+                    //获取“分享到朋友圈”按钮点击状态及自定义分享内容接口
+                    wx.updateTimelineShareData({
+                        title: "李家岩水情实况通报", // 分享标题
+                        desc: "四川恒宣水情实况通报，点击查看每日约定时段水情及实时水情数据...", // 分享描述
+                        link: "http://alex.mynatapp.cc/alex/index.jsp",//分享点击之后的链接---部署域名
+                        imgUrl:'http://alex.mynatapp.cc/alex/cdevlogo.png', // 分享图标---部署域名
+                        type: 'link', // 分享类型,music、video或link，不填默认为link
+                        success: function () {
+                            //成功之后的回调
+                        },
+                        cancel: function () {
+                            // 用户取消分享后执行的回调函数
+                        }
+                    });
+
+                    //获取“分享到腾讯微博”按钮点击状态及自定义分享内容接口
+                    wx.onMenuShareWeibo({
+                        title: "李家岩水情实况通报", // 分享标题
+                        desc: "四川恒宣水情实况通报，点击查看每日约定时段水情及实时水情数据...", // 分享描述
+                        link: "http://alex.mynatapp.cc/alex/index.jsp",//分享点击之后的链接---部署域名
+                        imgUrl:'http://alex.mynatapp.cc/alex/cdevlogo.png', // 分享图标---部署域名
+                        type: 'link', // 分享类型,music、video或link，不填默认为link
+                        success: function () {
+                            // 用户确认分享后执行的回调函数
+                        },
+                        cancel: function () {
+                            // 用户取消分享后执行的回调函数
+                        }
+                    });
+                });
+                wx.error(function (res) {
+                    //打印错误消息。及把 debug:false,设置为debug:ture就可以直接在网页上看到弹出的错误提示
+                    //alert("错误:分享出错！！");
+                });
+            }
+        })*/
+
+    })
+</script>
+</html>
